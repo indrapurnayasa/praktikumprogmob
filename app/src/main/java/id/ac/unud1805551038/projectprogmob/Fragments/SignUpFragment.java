@@ -1,5 +1,6 @@
 package id.ac.unud1805551038.projectprogmob.Fragments;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -30,8 +31,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import id.ac.unud1805551038.projectprogmob.AuthActivity;
 import id.ac.unud1805551038.projectprogmob.Constant;
+import id.ac.unud1805551038.projectprogmob.HomeActivity;
 import id.ac.unud1805551038.projectprogmob.R;
+import id.ac.unud1805551038.projectprogmob.UserInfoActivity;
 
 public class SignUpFragment extends Fragment {
     private View view;
@@ -201,7 +205,11 @@ public class SignUpFragment extends Fragment {
                         editor.putString("token",object.getString("token"));
                         editor.putString("name",user.getString("name"));
                         editor.putString("email",user.getString("email"));
+                        editor.putBoolean("isLoggedIn",true);
                         editor.apply();
+
+                        startActivity(new Intent(((AuthActivity)getContext()), UserInfoActivity.class));
+                        ((AuthActivity) getContext()).finish();
                         Toast.makeText(getContext(),"Register Success", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {

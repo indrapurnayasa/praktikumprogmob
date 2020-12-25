@@ -1,9 +1,12 @@
 package id.ac.unud1805551038.projectprogmob.Fragments;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +33,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import id.ac.unud1805551038.projectprogmob.AuthActivity;
 import id.ac.unud1805551038.projectprogmob.Constant;
+import id.ac.unud1805551038.projectprogmob.HomeActivity;
 import id.ac.unud1805551038.projectprogmob.R;
 
 public class SignInFragment extends Fragment {
@@ -40,6 +45,7 @@ public class SignInFragment extends Fragment {
     private TextView txtSignUp;
     private Button btnSignIn;
     private ProgressDialog dialog;
+    public static int idUser;
 
     public SignInFragment(){}
 
@@ -141,10 +147,17 @@ public class SignInFragment extends Fragment {
                 JSONObject object = new JSONObject(response);
                 if(object.getBoolean("success")){
                     JSONObject user = object.getJSONObject("user");
-                    SharedPreferences userPref = getActivity().getApplicationContext().getSharedPreferences("user",getContext().MODE_PRIVATE);
+                    SharedPreferences userPref = getContext().getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = userPref.edit();
                     editor.putString("token",object.getString("token"));
+                    editor.putInt("id", user.getInt("id"));
+                    editor.putBoolean("isLoggedIn",true);
                     editor.apply();
+
+                    idUser = user.getInt("id");
+
+                    startActivity(new Intent(((AuthActivity)getContext()), HomeActivity.class));
+                    ((AuthActivity) getContext()).finish();
                     Toast.makeText(getContext(),"Login Success", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {

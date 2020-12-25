@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".AddTaskActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:layout_width="match_parent"
+        app:title=" "
+        android:elevation="1dp"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            android:background="@color/transparent"
+            android:layout_marginRight="12dp"
+            android:tint="@color/black"
+            android:onClick="cancelTask"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="New Class"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginTop="6dp">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:gravity="left"
+                android:hint="Class Name"
+                android:textSize="15sp"
+                android:id="@+id/txtNameClass"
+                android:padding="8dp"
+                android:background="@drawable/txt_background"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:gravity="left"
+                    android:hint="Date"
+                    android:textSize="15sp"
+                    android:id="@+id/txtDateClass"
+                    android:padding="8dp"
+                    android:background="@drawable/txt_background"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnTanggal"
+                    android:text="Pilih Tanggal"/>
+            </LinearLayout>
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:gravity="left"
+                android:hint="Link Meeting"
+                android:textSize="15sp"
+                android:id="@+id/txtMeetingClass"
+                android:padding="8dp"
+                android:background="@drawable/txt_background"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add"
+                android:id="@+id/btnAddClass"
+                android:layout_marginBottom="140dp"
+                android:textSize="20dp"
+                android:textAllCaps="false"/>
+
+
+            
+        </LinearLayout>
+            
+        
+    </ScrollView>
+        
+
+</LinearLayout>

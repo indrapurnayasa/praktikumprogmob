@@ -5,12 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.TextView;
 
 import id.ac.unud1805551038.projectprogmob.Fragments.SignInFragment;
 
 public class MainActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +24,18 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                isFirstTime();
+
+                SharedPreferences userPref = getApplicationContext().getSharedPreferences("user",Context.MODE_PRIVATE);
+                boolean isLoggedIn = userPref.getBoolean("isLoggedIn", false);
+
+                if (isLoggedIn){
+                    startActivity(new Intent(MainActivity.this,HomeActivity.class));
+                    finish();
+                }
+
+                else {
+                    isFirstTime();
+                }
             }
         }, 1500);
     }
@@ -39,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("isFirstTime",false);
             editor.apply();
 
-            //start Onboard activity
-            startActivity(new Intent(MainActivity.this,OnBoardActivity.class));
+            //start home activity
+            startActivity(new Intent(MainActivity.this,AuthActivity.class));
             finish();
 
         }
@@ -50,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
 
         }
+
     }
 
 }

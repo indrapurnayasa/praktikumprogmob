@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Info Kelas</string>
     <string name="password">Password</string>
+    <string name="profinfo">Account Info</string>
+    <string name="login_email_hint">Email</string>
 </resources>
