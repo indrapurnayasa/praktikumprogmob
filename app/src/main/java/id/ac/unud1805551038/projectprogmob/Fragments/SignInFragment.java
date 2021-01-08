@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,6 +27,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +38,7 @@ import java.util.Map;
 import id.ac.unud1805551038.projectprogmob.AuthActivity;
 import id.ac.unud1805551038.projectprogmob.Constant;
 import id.ac.unud1805551038.projectprogmob.HomeActivity;
+import id.ac.unud1805551038.projectprogmob.MainActivity;
 import id.ac.unud1805551038.projectprogmob.R;
 
 public class SignInFragment extends Fragment {
@@ -46,6 +49,7 @@ public class SignInFragment extends Fragment {
     private Button btnSignIn;
     private ProgressDialog dialog;
     public static int idUser;
+    String fcm;
 
     public SignInFragment(){}
 
@@ -66,14 +70,8 @@ public class SignInFragment extends Fragment {
         btnSignIn = view.findViewById(R.id.btnSignIn);
         dialog = new ProgressDialog(getContext());
         dialog.setCancelable(false);
+        fcm = MainActivity.fcm_token;
 
-        txtSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //change fragments
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameAuthContainer,new SignUpFragment()). commit();
-                }
-            });
 
         txtEmail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -122,6 +120,14 @@ public class SignInFragment extends Fragment {
                 }
             }
         });
+
+        txtSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //change fragments
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameAuthContainer,new SignUpFragment()). commit();
+            }
+        });
     }
 
     private boolean validate (){
@@ -151,6 +157,10 @@ public class SignInFragment extends Fragment {
                     SharedPreferences.Editor editor = userPref.edit();
                     editor.putString("token",object.getString("token"));
                     editor.putInt("id", user.getInt("id"));
+                    editor.putString("name", user.getString("name"));
+                    editor.putString("email", user.getString("email"));
+                    editor.putString("lastname", user.getString("lastname"));
+                    editor.putString("photo", user.getString("photo"));
                     editor.putBoolean("isLoggedIn",true);
                     editor.apply();
 
@@ -174,6 +184,7 @@ public class SignInFragment extends Fragment {
                 HashMap<String,String> map = new HashMap<>();
                 map.put("email",txtEmail.getText().toString().trim());
                 map.put("password",txtPassword.getText().toString());
+                map.put("fcm_token", fcm);
                 return map;
             }
         };

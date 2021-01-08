@@ -18,11 +18,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,12 +36,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import id.ac.unud1805551038.projectprogmob.Adapter.TaskAdapter;
 import id.ac.unud1805551038.projectprogmob.AddTaskActivity;
 import id.ac.unud1805551038.projectprogmob.AuthActivity;
 import id.ac.unud1805551038.projectprogmob.Constant;
+import id.ac.unud1805551038.projectprogmob.Database.RoomDB;
 import id.ac.unud1805551038.projectprogmob.HomeActivity;
 import id.ac.unud1805551038.projectprogmob.Models.Task;
 import id.ac.unud1805551038.projectprogmob.Models.User;
@@ -44,12 +52,15 @@ import id.ac.unud1805551038.projectprogmob.R;
 public class HomeFragment extends Fragment{
     private View view;
     private RecyclerView recyclerView;
-    private ArrayList<Task> taskList;
+    public static ArrayList<Task> taskList;
     private ArrayList<User> userList;
     private SwipeRefreshLayout refreshLayout;
-    private TaskAdapter taskAdapter;
+    private TaskAdapter taskAdapter, taskAdapter1;
     private MaterialToolbar toolbar;
     private SharedPreferences sharedPreferences;
+    private ArrayList<Task> taskListBackup;
+    private ArrayList<User> userListBackup;
+    RoomDB database;
 
     public HomeFragment(){}
 
@@ -82,14 +93,20 @@ public class HomeFragment extends Fragment{
     private void getTasks() {
         taskList = new ArrayList<>();
         userList = new ArrayList<>();
+        taskListBackup = new ArrayList<>();
+        userListBackup = new ArrayList<>();
         refreshLayout.setRefreshing(true);
+        database = RoomDB.getInstance(getContext().getApplicationContext());
 
-        StringRequest request = new StringRequest(Request.Method.GET, Constant.TASK,response -> {
+        StringRequest request = new StringRequest(Request.Method.GET, Constant.TASK, response -> {
 
             try {
                 JSONObject object = new JSONObject(response);
                 if (object.getBoolean("success")) {
-
+                    database.taskDao().deleteAll();
+                    database.userDao().deleteAll();
+                    userListBackup.clear();
+                    taskList.clear();
                     JSONArray array = new JSONArray(object.getString("task"));
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject taskObject = array.getJSONObject(i);
@@ -97,12 +114,14 @@ public class HomeFragment extends Fragment{
                         Log.d("aaa", userObject.getString("name"));
 
                         User user = new User();
+                        user.setIdNya(i);
                         user.setId(userObject.getInt("id"));
                         user.setName(userObject.getString("name"));
                         user.setLastname(userObject.getString("lastname"));
                         user.setEmail(userObject.getString("email"));
                         user.setPhoto(userObject.getString("photo"));
                         userList.add(user);
+                        database.userDao().insertUser(user);
 
                         Task task = new Task();
                         task.setId(taskObject.getInt("id"));
@@ -112,29 +131,39 @@ public class HomeFragment extends Fragment{
                         task.setCreated_at(taskObject.getString("created_at"));
                         task.setUser_id(taskObject.getInt("user_id"));
                         taskList.add(task);
+                        database.taskDao().insetTask(task);
                     }
 
                     taskAdapter = new TaskAdapter(getContext(), taskList, userList);
                     recyclerView.setAdapter(taskAdapter);
                 }
 
-            }  catch (JSONException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
-
             refreshLayout.setRefreshing(false);
-
-        },error -> {
-            error.printStackTrace();
-            refreshLayout.setRefreshing(false);
-        }){
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if(error instanceof NetworkError || error instanceof AuthFailureError || error instanceof NoConnectionError || error instanceof TimeoutError){
+                    taskListBackup = (ArrayList<Task>) database.taskDao().loadAllPosts();
+                    userListBackup = (ArrayList<User>) database.userDao().loadAllUsers();
+                    taskAdapter1 = new TaskAdapter(getContext(), taskListBackup, userListBackup);
+                    recyclerView.setAdapter(taskAdapter1);
+                    refreshLayout.setRefreshing(false);
+                }
+            }
+    }){
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 String token = sharedPreferences.getString("token", "");
-                HashMap<String,String> map = new HashMap<>();
-                map.put("Authoriation","Bearer "+token);
-                return super.getHeaders();
+                Map<String, String> headers = new HashMap<>();
+                // Basic Authentication
+                //String auth = "Basic " + Base64.encodeToString(CONSUMER_KEY_AND_SECRET.getBytes(), Base64.NO_WRAP);
+
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
             }
         };
 

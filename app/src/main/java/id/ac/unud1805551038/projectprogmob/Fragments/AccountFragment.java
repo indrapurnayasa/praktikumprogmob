@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import id.ac.unud1805551038.projectprogmob.Adapter.AccountTaskAdapter;
 import id.ac.unud1805551038.projectprogmob.AuthActivity;
 import id.ac.unud1805551038.projectprogmob.Constant;
+import id.ac.unud1805551038.projectprogmob.EditPasswordActivity;
+import id.ac.unud1805551038.projectprogmob.EditProfileActvity;
+import id.ac.unud1805551038.projectprogmob.EditTaskActivity;
 import id.ac.unud1805551038.projectprogmob.HomeActivity;
 import id.ac.unud1805551038.projectprogmob.MainActivity;
 import id.ac.unud1805551038.projectprogmob.Models.Task;
@@ -58,6 +63,7 @@ public class AccountFragment extends Fragment {
     private ArrayList<Task> arrayList;
     private AccountTaskAdapter adapter;
     private String imgUrl ="";
+    ImageButton btnOption;
 
     private SharedPreferences preferences;
 
@@ -78,19 +84,37 @@ public class AccountFragment extends Fragment {
         imgProfile = view.findViewById(R.id.imgAccountProfile);
         txtName = view.findViewById(R.id.txtAccountName);
         txtTaskCount = view.findViewById(R.id.txtAccounTaskCount);
-        recyclerView = view.findViewById(R.id.recyclerAccount);
-        btnEditAccount = view.findViewById(R.id.btnEditAccount);
         btnLogout = view.findViewById(R.id.item_logout);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
+        btnOption = view.findViewById(R.id.btnTaskOption);
 
 
+        btnOption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(getContext(), btnOption);
+                popupMenu.inflate(R.menu.menu_account);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
-        btnEditAccount.setOnClickListener(v -> {
-            Intent i = new Intent(((HomeActivity)getContext()), UserInfoActivity.class);
-            i.putExtra("imgUrl",imgUrl);
-            startActivity(i);
-        });
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.item_edit: {
+                                Intent i = new Intent(getActivity(), EditProfileActvity.class);
+                                startActivity(i);
+                                return true;
+                            }
+                            case R.id.item_delete: {
+                                Intent i = new Intent(getActivity(), EditPasswordActivity.class);
+                                startActivity(i);
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+            }    });
+
 
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,26 +126,15 @@ public class AccountFragment extends Fragment {
     }
 
     private void getData() {
-        arrayList = new ArrayList<>();
-        StringRequest request = new StringRequest(Request.Method.GET, Constant.MY_TASK, res->{
+        StringRequest request = new StringRequest(Request.Method.POST, Constant.GET_PROFILE, res->{
 
             try {
                 JSONObject object = new JSONObject(res);
                 if (object.getBoolean("success")){
-                    JSONArray tasks = object.getJSONArray("tasks");
-                    for (int i = 0; i < tasks.length(); i++){
-                        JSONObject p = tasks.getJSONObject(i);
-
-                        Task task = new Task();
-                        //task.setPhoto(Constant.URL+"storage/task/"+p.getString("file"));
-                        arrayList.add(task);
-                    }
                     JSONObject user = object.getJSONObject("user");
-                    txtName.setText(user.getString("name"));
-                    txtTaskCount.setText(arrayList.size()+"");
+                    txtName.setText(user.getString("name")+" "+user.getString("lastname"));
+                    txtTaskCount.setText(object.getString("totalTask"));
                     Picasso.get().load(Constant.URL+"storage/profiles/"+user.getString("photo")).into(imgProfile);
-                    adapter = new AccountTaskAdapter(getContext(),arrayList);
-                    recyclerView.setAdapter(adapter);
                     imgUrl = Constant.URL+"storage/profiles/"+user.getString("photo");
                 }
             } catch (JSONException e) {
@@ -135,9 +148,12 @@ public class AccountFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 String token = preferences.getString("token","");
-                HashMap<String,String> map = new HashMap<>();
-                map.put("Authorization","Bearer "+token);
-                return map;
+                Map<String, String> headers = new HashMap<>();
+                // Basic Authentication
+                //String auth = "Basic " + Base64.encodeToString(CONSUMER_KEY_AND_SECRET.getBytes(), Base64.NO_WRAP);
+
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
             }
         };
         RequestQueue queue = Volley.newRequestQueue(getContext());
@@ -153,8 +169,8 @@ public class AccountFragment extends Fragment {
     private void logout(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Confirm");
-        builder.setMessage("Are You Sure to Logout?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setMessage("Are you sure for log out?");
+        builder.setPositiveButton("Log Out", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 SharedPreferences.Editor editor = preferences.edit();
@@ -166,7 +182,7 @@ public class AccountFragment extends Fragment {
                 Toast.makeText(getContext(),"Logout Success", Toast.LENGTH_SHORT).show();
             }
         });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 

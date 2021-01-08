@@ -36,21 +36,27 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.ac.unud1805551038.projectprogmob.Fragments.AccountFragment;
+import id.ac.unud1805551038.projectprogmob.Fragments.HomeFragment;
 import id.ac.unud1805551038.projectprogmob.Fragments.SignInFragment;
 
 public class EditProfileActvity extends AppCompatActivity {
 
-    private Button button, btnEdit;
-    private TextView txtName, txtfirst, txtlast, txthp, photo;
-    TextInputLayout layoutName, layoutfirst, layoutLastName, layouthp;
+    private Button buttonCancel, btnEdit;
+    private FragmentManager fragmentManager;
+    private TextView txtEmail, txtfirst, txtlast, txthp, photo;
+    TextInputLayout layoutEmail, layoutfirst, layoutLastName, layouthp;
     int idlogin;
     String tokenLogin;
     ProgressDialog dialog;
     CircleImageView circleImageView;
     private static final int GALLERY_ADD_PROFILE = 1;
     private Bitmap bitmap = null;
+    private String imgUrl ="";
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,26 +69,21 @@ public class EditProfileActvity extends AppCompatActivity {
         init();
     }
 
-    public void openActivity() {
-        Intent intent1 = new Intent(EditProfileActvity.this, AccountFragment.class);
-        startActivity(intent1);
-    }
 
     private void init() {
-        button = findViewById(R.id.btnEditSave);
-        btnEdit = findViewById(R.id.btnEditSave);
+        preferences = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+        buttonCancel = findViewById(R.id.btnCancel);
+        btnEdit = findViewById(R.id.btnEditProfile);
         photo = findViewById(R.id.txtEditSelectPhoto);
         circleImageView = findViewById(R.id.imgEditUserInfo);
 
         layoutfirst = findViewById(R.id.txtEditLayoutFirstUserInfo);
-        layoutLastName = findViewById(R.id.txtEditLayoutLastnameUserInfo);
-        layoutName = findViewById(R.id.txtEditLayoutNameUserInfo);
-        layouthp = findViewById(R.id.txtEditLayoutHp);
+        layoutLastName = findViewById(R.id.txtEditLayoutLastname);
+        layoutEmail = findViewById(R.id.txtEditLayoutNameUserInfo);
 
-        txtfirst = findViewById(R.id.txtEditFirstUserInfo);
+        txtfirst = findViewById(R.id.txtEditFirstName);
         txtlast = findViewById(R.id.txtEditLastnameUserInfo);
-        txtName = findViewById(R.id.txtEditNameUserInfo);
-        txthp = findViewById(R.id.txtEditHp);
+        txtEmail = findViewById(R.id.txtEditEmail);
 
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,15 +94,14 @@ public class EditProfileActvity extends AppCompatActivity {
             }
         });
 
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                openActivity();
-//            }
-//        });
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         getUserInfo();
-        setUserInfo();
 
         dialog = new ProgressDialog(EditProfileActvity.this);
         dialog.setCancelable(false);
@@ -111,13 +111,7 @@ public class EditProfileActvity extends AppCompatActivity {
             public void onClick(View view) {
                 if (validate()) {
                     edit();
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            openActivity();
-                        }
-                    }, 1000);
+                    onBackPressed();
                 }
             }
         });
@@ -159,7 +153,7 @@ public class EditProfileActvity extends AppCompatActivity {
             }
         });
 
-        txtName.addTextChangedListener(new TextWatcher() {
+        txtEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -176,82 +170,45 @@ public class EditProfileActvity extends AppCompatActivity {
             }
         });
 
-        txthp.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
     }
 
     private void getUserInfo() {
-        StringRequest request = new StringRequest(Request.Method.POST, Constant.GET_USER, response -> {
+        StringRequest request = new StringRequest(Request.Method.POST, Constant.GET_PROFILE, res->{
+
             try {
-                JSONObject object1 = new JSONObject(response);
-                if (object1.getBoolean("success")) {
-                    JSONObject user = object1.getJSONObject("user");
-                    SharedPreferences userPref = getApplicationContext().getSharedPreferences("user", getApplicationContext().MODE_PRIVATE);
-                    SharedPreferences.Editor editor = userPref.edit();
-                    editor.putString("name", user.getString("name"));
-                    editor.putString("first_name", user.getString("first_name"));
-                    editor.putString("last_name", user.getString("last_name"));
-                    editor.putString("no_hp", user.getString("no_hp"));
-                    editor.putString("photo", user.getString("photo"));
-                    editor.apply();
+                JSONObject object = new JSONObject(res);
+                if (object.getBoolean("success")){
+                    JSONObject user = object.getJSONObject("user");
+                    txtfirst.setText(user.getString("name"));
+                    txtlast.setText(user.getString("lastname"));
+                    txtEmail.setText(user.getString("email"));
+                    Picasso.get().load(Constant.URL+"storage/profiles/"+user.getString("photo")).into(circleImageView);
+                    imgUrl = Constant.URL+"storage/profiles/"+user.getString("photo");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "Get Data Failed", Toast.LENGTH_SHORT).show();
             }
-        }, error -> {
+
+        },error->{
             error.printStackTrace();
-        }) {
+        }){
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                String token = preferences.getString("token","");
                 Map<String, String> headers = new HashMap<>();
                 // Basic Authentication
                 //String auth = "Basic " + Base64.encodeToString(CONSUMER_KEY_AND_SECRET.getBytes(), Base64.NO_WRAP);
 
-                headers.put("Authorization", "Bearer " + tokenLogin);
+                headers.put("Authorization", "Bearer " + token);
                 return headers;
-            }
-
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String, String> map = new HashMap<>();
-                map.put("id", idlogin + "");
-                return map;
             }
         };
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         queue.add(request);
     }
 
-    private void setUserInfo() {
-        SharedPreferences userPref = getApplicationContext().getSharedPreferences("user", getApplicationContext().MODE_PRIVATE);
 
-        String firstName = userPref.getString("first_name", null);
-        String lastName = userPref.getString("last_name", null);
-        String name = userPref.getString("name", null);
-        String hp = userPref.getString("no_hp", null);
-
-        Picasso.get().load(Constant.URL + "storage/profiles/" + userPref.getString("photo", null)).into(circleImageView);
-
-        txtfirst.setText(firstName);
-        txtlast.setText(lastName);
-        txtName.setText(name);
-        txthp.setText(hp);
-        //email.setText(emailLogin);
-    }
 
     private void isLogin() {
         SharedPreferences userPref = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -288,12 +245,13 @@ public class EditProfileActvity extends AppCompatActivity {
                     JSONObject user = object1.getJSONObject("user");
                     SharedPreferences userPref = getApplicationContext().getSharedPreferences("user", getApplicationContext().MODE_PRIVATE);
                     SharedPreferences.Editor editor = userPref.edit();
-                    editor.putString("first_name", user.getString("first_name"));
-                    editor.putString("last_name", user.getString("last_name"));
-                    //editor.putString("email", user.getString("email"));
+                    editor.putString("name", user.getString("name"));
+                    editor.putString("lastname", user.getString("lastname"));
+                    editor.putString("email", user.getString("email"));
                     editor.putString("photo", user.getString("photo"));
                     editor.apply();
-                    Toast.makeText(getApplicationContext(), "Edit Success", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    Toast.makeText(getApplicationContext(), "Edit Profile Success", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -311,18 +269,15 @@ public class EditProfileActvity extends AppCompatActivity {
                 // Basic Authentication
                 //String auth = "Basic " + Base64.encodeToString(CONSUMER_KEY_AND_SECRET.getBytes(), Base64.NO_WRAP);
 
-
                 headers.put("Authorization", "Bearer " + tokenLogin);
                 return headers;
             }
 
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> map = new HashMap<>();
-                map.put("id", idlogin + "");
-                map.put("name", txtName.getText().toString());
-                map.put("first_name", txtfirst.getText().toString());
-                map.put("last_name", txtlast.getText().toString());
-                map.put("no_hp", txthp.getText().toString());
+                map.put("email", txtEmail.getText().toString());
+                map.put("name", txtfirst.getText().toString());
+                map.put("lastname", txtlast.getText().toString());
                 map.put("photo", bitmapToString(bitmap));
                 return map;
             }
@@ -359,14 +314,14 @@ public class EditProfileActvity extends AppCompatActivity {
     }
 
     private boolean validate() {
-        if (txtfirst.getText().toString().length() < 3) {
+        if (txtfirst.getText().toString().length() < 4) {
             layoutfirst.setErrorEnabled(true);
-            layoutfirst.setError("Name must be at least 8");
+            layoutfirst.setError("Name must be at least 4");
             return false;
         }
-        if (txtlast.getText().toString().length() < 3) {
+        if (txtlast.getText().toString().length() < 4) {
             layoutLastName.setErrorEnabled(true);
-            layoutLastName.setError("Name must be at least 8");
+            layoutLastName.setError("Name must be at least 4");
             return false;
         }
         return true;

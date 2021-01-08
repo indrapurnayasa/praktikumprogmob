@@ -61,8 +61,6 @@ public class SignUpFragment extends Fragment {
         layoutPassword = view.findViewById(R.id.txtLayoutPasswordSignUp);
         layoutEmail = view.findViewById(R.id.txtLayoutEmailSignUp);
         layoutConfirm = view.findViewById(R.id.txtLayoutConfirmSignUp);
-        layoutName = view.findViewById(R.id.txtLayoutName);
-        txtName = view.findViewById(R.id.txtName);
         txtPassword = view.findViewById(R.id.txtPasswordSignUp);
         txtConfirm = view.findViewById(R.id.txtConfirmSignUp);
         txtSignIn = view.findViewById(R.id.txtSignIn);
@@ -71,13 +69,6 @@ public class SignUpFragment extends Fragment {
         dialog = new ProgressDialog(getContext());
         dialog.setCancelable(false);
 
-        txtSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //change fragments
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameAuthContainer,new SignInFragment()). commit();
-            }
-        });
 
         txtEmail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -98,24 +89,6 @@ public class SignUpFragment extends Fragment {
             }
         });
 
-        txtName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (txtName.getText().toString().length()>9){
-                    layoutName.setErrorEnabled(false);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
 
         txtPassword.addTextChangedListener(new TextWatcher() {
             @Override
@@ -135,6 +108,7 @@ public class SignUpFragment extends Fragment {
 
             }
         });
+
 
         txtConfirm.addTextChangedListener(new TextWatcher() {
             @Override
@@ -164,17 +138,20 @@ public class SignUpFragment extends Fragment {
                 }
             }
         });
+
+        txtSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //change fragments
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameAuthContainer,new SignInFragment()). commit();
+            }
+        });
     }
 
         private boolean validate (){
             if (txtEmail.getText().toString().isEmpty()){
                 layoutEmail.setErrorEnabled(true);
                 layoutEmail.setError("Email is Required");
-                return false;
-            }
-            if (txtName.getText().toString().length()<10){
-                layoutName.setErrorEnabled(true);
-                layoutName.setError("Name must be at least 10 characters");
                 return false;
             }
             if (txtPassword.getText().toString().length()<8){
@@ -184,7 +161,7 @@ public class SignUpFragment extends Fragment {
             }
             if (!txtConfirm.getText().toString().equals(txtPassword.getText().toString())){
                 layoutConfirm.setErrorEnabled(true);
-                layoutConfirm.setError("Password dose not match");
+                layoutConfirm.setError("Password does not match");
                 return false;
             }
 
@@ -203,7 +180,6 @@ public class SignUpFragment extends Fragment {
                         SharedPreferences userPref = getActivity().getApplicationContext().getSharedPreferences("user",getContext().MODE_PRIVATE);
                         SharedPreferences.Editor editor = userPref.edit();
                         editor.putString("token",object.getString("token"));
-                        editor.putString("name",user.getString("name"));
                         editor.putString("email",user.getString("email"));
                         editor.putBoolean("isLoggedIn",true);
                         editor.apply();
@@ -226,7 +202,6 @@ public class SignUpFragment extends Fragment {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     HashMap<String,String> map = new HashMap<>();
                     map.put("email",txtEmail.getText().toString().trim());
-                    map.put("name",txtName.getText().toString());
                     map.put("password",txtPassword.getText().toString());
                     map.put("password_confirmation",txtConfirm.getText().toString());
                     return map;

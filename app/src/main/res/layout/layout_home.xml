@@ -28,8 +28,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Info Kelas"
-                    android:fontFamily=""
                     android:textSize="20sp"
+                    android:fontFamily="serif-monospace"
                     android:textColor="@color/black"/>
 
             </com.google.android.material.appbar.MaterialToolbar>

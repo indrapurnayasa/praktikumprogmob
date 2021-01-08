@@ -23,16 +23,21 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import id.ac.unud1805551038.projectprogmob.Database.RoomDB;
+import id.ac.unud1805551038.projectprogmob.Models.Task;
 
 public class AddTaskActivity extends AppCompatActivity {
 
@@ -41,6 +46,9 @@ public class AddTaskActivity extends AppCompatActivity {
     private DatePickerDialog datePickerDialog;
     private SimpleDateFormat dateFormatter;
     private String tokenLogin;
+//    RoomDB database;
+//    public static ArrayList<Task> ListTask = new ArrayList<>();
+//    public static ArrayList<Task> ListTaskBackup = new ArrayList<>();
 
 
     @Override
@@ -60,6 +68,7 @@ public class AddTaskActivity extends AppCompatActivity {
         meeting = (EditText)findViewById(R.id.txtMeetingClass);
         btnAdd = (Button)findViewById(R.id.btnAddClass);
         btnTgl = (Button)findViewById(R.id.btnTanggal);
+
 
         btnTgl.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,21 +129,19 @@ public class AddTaskActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    //public void changeTask(View view) {
-      //  Intent MyFileIntent = new Intent(Intent.ACTION_PICK);
-        //MyFileIntent.setType("*/*");
-        //startActivityForResult(MyFileIntent,ACTION_GET_CONTENT);
-    //}
-
     private void addTask(){
+//        ListTask.clear();
+//        database = RoomDB.getInstance(getApplicationContext());
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("allDevices");
         StringRequest request =  new StringRequest(Request.Method.POST, Constant.ADD_TASK, response ->{
 
             try {
                 JSONObject object = new JSONObject(response);
-                if(object.getBoolean("success")){
+                if(object.getInt("message_id")!=0){
+//                    database.taskDao().deleteAll();
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     startActivity(intent);
-                    Toast.makeText(getApplicationContext(),"Add Task Success", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Add Class Success", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

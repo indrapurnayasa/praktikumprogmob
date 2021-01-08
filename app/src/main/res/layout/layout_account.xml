@@ -18,9 +18,18 @@
             android:layout_width="wrap_content"
             android:textColor="#000000"
             android:textSize="20sp"
-            android:text="My Task"
+            android:text="My Profile"
             android:fontFamily="serif-monospace"
             android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:id="@+id/btnTaskOption"
+            android:background="@android:color/transparent"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_baseline_more_vert_24"/>
     </com.google.android.material.appbar.MaterialToolbar>
 
 
@@ -48,7 +57,7 @@
                 android:layout_width="wrap_content"
                 android:textSize="16sp"
                 android:textColor="#000000"
-                android:text="Adi Suandika"
+                android:text="Indra Purnayasa"
                 android:textStyle="bold"
                 android:id="@+id/txtAccountName"
                 android:layout_height="wrap_content"/>
@@ -75,40 +84,24 @@
                 android:layout_width="wrap_content"
                 android:textSize="16sp"
                 android:textColor="#000000"
-                android:text="Tasks"
+                android:text="Posts"
                 android:layout_height="wrap_content"/>
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:background="@drawable/btn_round"
-        android:text="Edit Account"
-        android:textColor="#FFFFFF"
-        android:textAllCaps="false"
-        android:id="@+id/btnEditAccount"
-        android:layout_marginBottom="16dp"
-        android:layout_height="40dp"/>
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:id="@+id/recyclerAccount"
-        android:layout_height="wrap_content"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_marginLeft="70dp"
         android:layout_marginRight="70dp"
-        android:background="@drawable/btn_round"
+        android:background="@drawable/login_button_bk"
         android:text="Log Out"
         android:textColor="#FFFFFF"
         android:textAllCaps="false"
         android:id="@+id/item_logout"
+        android:layout_gravity="bottom"
         android:layout_marginBottom="16dp"
         android:layout_height="40dp"/>
 

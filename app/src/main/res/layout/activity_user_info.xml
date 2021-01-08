@@ -14,7 +14,8 @@
         android:layout_marginBottom="30dp"
         android:fontFamily="serif"
         android:gravity="center_horizontal"
-        android:text="User Info"/>
+        android:text="User Info"
+        android:textColor="@color/black"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="120dp"
@@ -70,7 +71,7 @@
         android:layout_height="wrap_content"
         android:text="Done"
         android:id="@+id/btnContinue"
-        android:background="@drawable/btn_round"
+        android:background="@drawable/login_button_bk"
         android:textColor="@color/white"
         android:textSize="17dp"
         android:layout_marginBottom="70dp"

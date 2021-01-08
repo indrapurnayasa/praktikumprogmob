@@ -1,9 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".EditTaskActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            style="@style/linearParent"
+            android:padding="10dp"
+            android:layout_gravity="center">
+
+            <TextView
+                style="@style/headerTextPrimary"
+                android:text="Edit Info Kelas"
+                android:textColor="@color/black"
+                android:layout_marginTop="10dp" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_marginTop="20dp">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:gravity="left"
+                        android:hint="Class Name"
+                        android:textSize="15sp"
+                        android:id="@+id/txtNameClassEdit"
+                        android:padding="8dp"
+                        android:background="@drawable/txt_background"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:layout_width="140dp"
+                            android:layout_height="wrap_content"
+                            android:inputType="textMultiLine"
+                            android:gravity="left"
+                            android:hint="Date"
+                            android:textSize="15sp"
+                            android:id="@+id/txtDateClassEdit"
+                            android:padding="8dp"
+                            android:background="@drawable/txt_background"/>
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/btnTanggal"
+                            android:text="Pilih Tanggal"/>
+                    </LinearLayout>
+
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:gravity="left"
+                        android:hint="Link Meeting"
+                        android:textSize="15sp"
+                        android:id="@+id/txtMeetingClassEdit"
+                        android:padding="8dp"
+                        android:background="@drawable/txt_background"/>
+
+                </LinearLayout>
+
+
+            </ScrollView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="10dp">
+                <LinearLayout
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="200dp"
+                    android:layout_width="150dp"
+                    android:layout_height="60dp">
+
+                    <Button
+                        style="@style/loginButton"
+                        android:text="Edit"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/loginViewsMargin"
+                        android:id="@+id/btnEditTask"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_marginTop="20dp"
+                    android:layout_marginLeft="200dp"
+                    android:layout_width="150dp"
+                    android:layout_height="60dp">
+
+                    <Button
+                        android:id="@+id/btnCancel"
+                        style="@style/loginButton"
+                        android:text="Cancel"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/loginViewsMargin"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>

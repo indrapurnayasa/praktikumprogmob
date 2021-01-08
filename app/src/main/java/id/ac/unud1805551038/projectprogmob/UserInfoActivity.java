@@ -101,20 +101,20 @@ public class UserInfoActivity extends AppCompatActivity {
 
         }
     }
-//    private boolean validate () {
-//        if (txtFirstName.getText().toString().isEmpty()) {
-//            layoutFirstName.setErrorEnabled(true);
-//            layoutFirstName.setError("Nama Depan Tidak Boleh Kosong");
-//            return false;
-//        }
-//
-//        if (txtLastName.getText().toString().isEmpty()) {
-//            layoutLastName.setErrorEnabled(true);
-//            layoutLastName.setError("Nama Belakang Tidak Boleh Kosong");
-//            return false;
-//        }
-//        return true;
-//    }
+    private boolean validate () {
+        if (txtFirstName.getText().toString().isEmpty()) {
+            layoutFirstName.setErrorEnabled(true);
+            layoutFirstName.setError("Nama Depan Tidak Boleh Kosong");
+            return false;
+        }
+
+        if (txtLastName.getText().toString().isEmpty()) {
+            layoutLastName.setErrorEnabled(true);
+            layoutLastName.setError("Nama Belakang Tidak Boleh Kosong");
+            return false;
+        }
+        return true;
+    }
 
     private void saveUserInfo(){
         dialog.setMessage("Menyimpan Data");

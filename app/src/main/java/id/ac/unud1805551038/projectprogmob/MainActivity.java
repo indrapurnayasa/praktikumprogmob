@@ -10,14 +10,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import id.ac.unud1805551038.projectprogmob.Fragments.SignInFragment;
 
 public class MainActivity extends AppCompatActivity {
-
+    public static String fcm_token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fcm_token = FirebaseInstanceId.getInstance().getToken();
+        FirebaseMessaging.getInstance().subscribeToTopic("allDevices");
         setContentView(R.layout.activity_main);
 
         Handler handler = new Handler();

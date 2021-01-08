@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "67684578955",
+    "project_id": "infokelas-51d7b",
+    "storage_bucket": "infokelas-51d7b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:67684578955:android:1e76d6fa0cd111942f468e",
+        "android_client_info": {
+          "package_name": "id.ac.unud1805551038.projectprogmob"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "67684578955-gak4grkjg43oto126frhthsp6ktviqjp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvtJZi65Ss02ZPydnpckFRNh6Iyun4wf0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "67684578955-gak4grkjg43oto126frhthsp6ktviqjp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

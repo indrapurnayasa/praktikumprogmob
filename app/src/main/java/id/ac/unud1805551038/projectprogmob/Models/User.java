@@ -1,10 +1,30 @@
 package id.ac.unud1805551038.projectprogmob.Models;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "users")
 public class User {
+
+    @PrimaryKey(autoGenerate = false)
+    @NonNull
+    private int idNya;
+
+    @ColumnInfo(name = "id")
     private int id;
+
+    @ColumnInfo(name = "name")
     private String name;
+
+    @ColumnInfo(name = "last_name")
     private String lastname;
+
+    @ColumnInfo(name = "photo")
     private String photo;
+
+    @ColumnInfo(name = "email")
     private String email;
 
     public int getId() {
@@ -45,5 +65,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public int getIdNya() {
+        return idNya;
+    }
+
+    public void setIdNya(int idNya) {
+        this.idNya = idNya;
     }
 }

@@ -39,6 +39,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.ac.unud1805551038.projectprogmob.Constant;
+import id.ac.unud1805551038.projectprogmob.EditTaskActivity;
 import id.ac.unud1805551038.projectprogmob.Fragments.SignInFragment;
 import id.ac.unud1805551038.projectprogmob.HomeActivity;
 import id.ac.unud1805551038.projectprogmob.Models.Task;
@@ -59,6 +60,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder>{
         this.listUser = listUser;
     }
 
+    public  TaskAdapter(ArrayList<Task> listTask, Context context){
+        this.listTask = listTask;
+        this.context = context;
+    }
+
     @NonNull
     @Override
     public TaskHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -75,9 +81,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder>{
         holder.txtName.setText(user.getName()+" "+user.getLastname());
         holder.txtDate.setText("Tanggal: "+task.getDate());
         holder.txtClass.setText("Kelas: "+task.getName_class());
-        holder.txtMeeting.setText("Link Meeting"+task.getMeeting());
-        Log.d("xxx","aa"+userPref.getInt("id", 0));
-        if(task.getUser_id()==2){
+        holder.txtMeeting.setText("Link Meeting: "+task.getMeeting());
+        if(task.getUser_id()==userPref.getInt("id", 0)){
             holder.btnTaskOption.setVisibility(View.VISIBLE);
         }else{
             holder.btnTaskOption.setVisibility(View.GONE);
@@ -92,14 +97,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder>{
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()){
                         case R.id.item_edit:{
-//                            nt i = new Intent(((HomeActivity)context), EditPostActivity.class);
-//                            i.putExtra("id", task.getId());
-//                            i.putExtra("position", position);
-//                            i.putExtra("desc",task.getDesc());
-//                            i.putExtra("matapelajaran", task.getMatapelajaran());
-//                            context.startActivity(i);
-//                            return true;
-                            Toast.makeText(context,"Ini Menu Edit", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(((HomeActivity)context), EditTaskActivity.class);
+                            i.putExtra("position", position);
+                            context.startActivity(i);
                             return true;
                         }
                         case R.id.item_delete:{
@@ -113,7 +113,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder>{
                 private void deleteTask(int task_id, int position) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle("Confirm");
-                    builder.setMessage("Delete Task?");
+                    builder.setMessage("Delete Class?");
                     builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
